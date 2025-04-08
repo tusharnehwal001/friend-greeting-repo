@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Message For You!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Decorative background patterns */
+        .pattern {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .pattern-circles {
+            background-image: radial-gradient(circle at 25px 25px, #ff9f68 2px, transparent 0),
+                             radial-gradient(circle at 75px 75px, #4ecdc4 2px, transparent 0);
+            background-size: 100px 100px;
+        }
+        
+        .pattern-dots {
+            background-image: radial-gradient(#c882e4 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 
+                        0 5px 15px rgba(0, 0, 0, 0.1),
+                        inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+            padding: 50px;
+            max-width: 850px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin: 30px 0;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                rgba(255,255,255,0) 0%, 
+                rgba(255,255,255,0.1) 50%, 
+                rgba(255,255,255,0) 100%);
+            transform: rotate(45deg);
+            animation: shimmer 8s infinite linear;
+            pointer-events: none;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-50%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 30px;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ff6b6b, transparent);
+            border-radius: 2px;
+        }
+        
+        p {
+            color: #555;
+            font-size: 1.3rem;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .gifts-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+            perspective: 1000px;
+        }
+        
+        .gift {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border-radius: 20px;
+        }
+        
+        .gift:hover {
+            transform: rotateY(180deg) scale(1.05);
+        }
+        
+        .gift-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .gift-front {
+            background: linear-gradient(135deg, #fad0c4 0%, #f1a7f1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transform-style: preserve-3d;
+        }
+        
+        .gift-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .gift-ribbon {
+            position: absolute;
+            background-color: white;
+        }
+        
+        .gift-ribbon-h {
+            top: 50%;
+            width: 100%;
+            height: 15px;
+            transform: translateY(-50%);
+        }
+        
+        .gift-ribbon-v {
+            left: 50%;
+            height: 100%;
+            width: 15px;
+            transform: translateX(-50%);
+        }
+        
+        .gift-bow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+        
+        .gift-bow::before,
+        .gift-bow::after {
+            content: '';
+            position: absolute;
+            background-color: white;
+            border-radius: 15px;
+            width: 45px;
+            height: 20px;
+            z-index: 1;
+        }
+        
+        .gift-bow::before {
+            top: 10px;
+            left: -17px;
+            transform: rotate(-35deg);
+        }
+        
+        .gift-bow::after {
+            top: 10px;
+            right: -17px;
+            transform: rotate(35deg);
+        }
+        
+        .gift-number {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .surprise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            flex-direction: column;
+        }
+        
+        .surprise-content {
+            background: linear-gradient(135deg, #fff 0%, #f5f7fa 100%);
+            padding: 40px;
+            border-radius: 30px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: bounceIn 0.6s;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                        inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .surprise-content h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+        
+        .surprise-content p {
+            font-size: 1.3rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .close-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .close-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffed72;
+            border-radius: 0;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        
+        .heart {
+            position: fixed;
+            font-size: 20px;
+            animation: floatHeart 4s linear forwards;
+            z-index: 998;
+            opacity: 0;
+        }
+        
+        @keyframes floatHeart {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+        
+        /* 3D Gift Animation */
+        @keyframes pulse {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .animate-gift {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Beautiful decorative elements */
+        .decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .decoration-1 {
+            top: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            opacity: 0.5;
+        }
+        
+        .decoration-2 {
+            bottom: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            opacity: 0.6;
+        }
+        
+        /* Stars decoration */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        /* Message with floating animation */
+        .floating-text {
+            animation: float-text 4s ease-in-out infinite;
+        }
+        
+        @keyframes float-text {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 3D box shadow effect */
+        .box-3d {
+            position: relative;
+            transform: perspective(800px) rotateY(-10deg) rotateX(5deg);
+            transition: all 0.6s ease;
+        }
+        
+        .box-3d:hover {
+            transform: perspective(800px) rotateY(10deg) rotateX(-5deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative patterns -->
+    <div class="pattern pattern-circles"></div>
+    <div class="pattern pattern-dots"></div>
+    
+    <!-- Stars background -->
+    <div class="stars" id="stars"></div>
+    
+    <div class="container box-3d">
+        <!-- Decorative elements -->
+        <div class="decoration decoration-1"></div>
+        <div class="decoration decoration-2"></div>
+        
+        <h1 class="floating-text">Hello, Wonderful Friend! 💖</h1>
+        <p>I just wanted to take a moment to tell you how much your friendship means to me. You bring so much joy, laughter, and happiness into my life. To celebrate our amazing friendship, I've prepared some special surprises for you!</p>
+        
+        <p>Click on each gift box below to discover something special! <span style="font-size: 1.4rem">✨</span></p>
+        
+        <div class="gifts-container">
+            <!-- Gift 1 -->
+            <div class="gift" onclick="showSurprise('A Memory', 'Remember that time we had that amazing adventure? That day holds a special place in my heart. Thank you for creating such wonderful memories with me!')" id="gift1">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #fad0c4 0%, #f1a7f1 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">1</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>Open Me!</span>
+                </div>
+            </div>
+            
+            <!-- Gift 2 -->
+            <div class="gift" onclick="showSurprise('A Heartfelt Message', 'Your kindness, support, and wonderful spirit have made such a difference in my life. I appreciate you more than words can express. Thank you for being exactly who you are!')" id="gift2">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">2</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>Surprise!</span>
+                </div>
+            </div>
+            
+            <!-- Gift 3 -->
+            <div class="gift" onclick="showSurprise('Virtual Hug', 'Sending you the biggest, warmest virtual hug right now! Consider yourself hugged! 🤗💕')" id="gift3">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">3</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>For You!</span>
+                </div>
+            </div>
+            
+            <!-- Gift 4 -->
+            <div class="gift" onclick="showSurprise('Your Qualities I Admire', 'Your resilience, your compassion, your humor, and your authenticity are just a few of the many qualities I admire about you. You inspire me every day!')" id="gift4">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">4</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>Click Me!</span>
+                </div>
+            </div>
+            
+            <!-- New Gift 5 -->
+            <div class="gift" onclick="showSurprise('Life Would Be Boring Without You', 'You make ordinary days extraordinary with your energy and spirit. Life would be so boring without your wonderful presence in it!')" id="gift5">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">5</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>Special!</span>
+                </div>
+            </div>
+            
+            <!-- New Gift 6 -->
+            <div class="gift" onclick="showSurprise('Future Adventures', 'Here\'s to all the amazing adventures we have yet to experience together! The future is bright with you in it, and I can\'t wait to create more beautiful memories!')" id="gift6">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">6</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>Just For You!</span>
+                </div>
+            </div>
+            
+            <!-- New Gift 7 -->
+            <div class="gift" onclick="showSurprise('I Appreciate You', 'Thank you for all the times you\'ve been there for me, listened to me, and supported me. Your friendship is truly one of life\'s greatest treasures!')" id="gift7">
+                <div class="gift-face gift-front" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                    <div class="gift-ribbon gift-ribbon-h"></div>
+                    <div class="gift-ribbon gift-ribbon-v"></div>
+                    <div class="gift-bow"></div>
+                    <div class="gift-number">7</div>
+                </div>
+                <div class="gift-face gift-back">
+                    <span>Open Now!</span>
+                </div>
+            </div>
+        </div>
+        
+        <p>Each gift represents something I treasure about our friendship. I hope these little surprises bring a smile to your face, just as you've brought countless smiles to mine! 💫</p>
+    </div>
+    
+    <div class="surprise" id="surprise">
+        <div class="surprise-content">
+            <h2 id="surprise-title"></h2>
+            <p id="surprise-message"></p>
+            <button class="close-btn" onclick="closeSurprise()">💝 Thank You 💝</button>
+        </div>
+    </div>
+    
+    <script>
+        // Create stars background
+        function createStars() {
+            const stars = document.getElementById('stars');
+            const count = 100;
+            
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random animation delay
+                star.style.animationDelay = `${Math.random() * 4}s`;
+                
+                stars.appendChild(star);
+            }
+        }
+        
+        // Apply 3D animations to gifts
+        function setupGiftAnimations() {
+            const gifts = document.querySelectorAll('.gift');
+            
+            gifts.forEach((gift, index) => {
+                // Custom animation for each gift with different timing
+                gift.style.animation = `pulse ${2 + index * 0.2}s infinite ${index * 0.3}s`;
+                
+                // 3D hover effect with different rotation angles
+                gift.addEventListener('mouseover', function() {
+                    this.style.transform = `
+                        perspective(1000px) 
+                        rotateX(${Math.random() * 20 - 10}deg) 
+                        rotateY(${Math.random() * 20 - 10}deg) 
+                        scale(1.1)
+                    `;
+                });
+                
+                gift.addEventListener('mouseout', function() {
+                    this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                });
+            });
+        }
+        
+        function showSurprise(title, message) {
+            document.getElementById('surprise-title').innerText = title;
+            document.getElementById('surprise-message').innerText = message;
+            document.getElementById('surprise').style.display = 'flex';
+            
+            // Create confetti effect
+            createConfetti();
+            
+            // Create floating hearts
+            createFloatingHearts();
+            
+            // Apply 3D effect to surprise content
+            document.querySelector('.surprise-content').style.transform = 'perspective(1000px) rotateX(5deg)';
+        }
+        
+        function closeSurprise() {
+            document.getElementById('surprise').style.display = 'none';
+        }
+        
+        function createConfetti() {
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random position
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = Math.random() * window.innerHeight + 'px';
+                
+                // Random color
+                const colors = ['#ff6b6b', '#4ecdc4', '#ffed72', '#ff9f68', '#c882e4', '#43e97b', '#667eea'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random size
+                const size = Math.random() * 12 + 5;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                
+                // Random shape
+                const shapes = ['50%', '0%']; // Circle or square
+                confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
+                
+                // Random rotation
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Animation
+                confetti.style.animation = `float ${Math.random() * 4 + 2}s linear forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 6000);
+            }
+        }
+        
+        function createFloatingHearts() {
+            const emojis = [
+                '❤️', '💖', '💕', '💗', '💓', '💝', '🌟', '✨', '🎁', '🎉', 
+                '🎊', '💫', '🥰', '😍', '🤗', '💐', '🌈', '💯', '🎵', '💌'
+            ];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    
+                    // Random position from bottom
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = window.innerHeight + 'px';
+                    
+                    // Random size
+                    const size = Math.random() * 25 + 20;
+                    heart.style.fontSize = size + 'px';
+                    
+                    // Random rotation
+                    heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+                    
+                    // Animation duration
+                    const duration = Math.random() * 4 + 3;
+                    heart.style.animation = `floatHeart ${duration}s linear forwards`;
+                    
+                    document.body.appendChild(heart);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        heart.remove();
+                    }, duration * 1000);
+                }, i * 100);
+            }
+        }
+        
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            setupGiftAnimations();
+            
+            // Add 3D animations to gifts
+            const gifts = document.querySelectorAll('.gift');
+            gifts.forEach((gift, index) => {
+                // Set different animation delays
+                setTimeout(() => {
+                    gift.classList.add('animate-gift');
+                }, index * 300);
+            });
+        });
+    </script>
+</body>
+</html>
